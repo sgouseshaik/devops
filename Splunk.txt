@@ -1,0 +1,11 @@
+Search Queries
+===============
+index=myapp_logs earliest=-24h latest=now | stats count by source
+index=web_logs | top 10 uri
+index=security_logs | search error OR fail
+
+Splunk CLI
+============
+splunk start                    # Start Splunk service
+splunk stop                     # Stop Splunk service
+splunk search "index=_internal | stats count by sourcetype"

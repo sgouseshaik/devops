@@ -1,0 +1,21 @@
+# Authentication & Subscription Management
+#=========================================
+az login                      # Login to Azure
+az account list               # List available Azure accounts
+az account set --subscription "MySubscription"  # Set active subscription
+#Resource Management
+#====================
+az group create --name MyResourceGroup --location eastus # Create a resource group
+az group delete --name MyResourceGroup --yes --no-wait  # Delete resource group
+
+#Azure Kubernetes Service (AKS)
+#===============================
+az aks create --resource-group MyResourceGroup --name MyAKSCluster --node-count 3 --generate-ssh-keys
+az aks get-credentials --resource-group MyResourceGroup --name MyAKSCluster
+az aks delete --name MyAKSCluster --resource-group MyResourceGroup
+#Virtual Machines
+#==================
+az vm create --resource-group MyResourceGroup --name MyVM --image UbuntuLTS --admin-username azureuser --generate-ssh-keys
+az vm list -o table
+az vm start --name MyVM --resource-group MyResourceGroup
+az vm stop --name MyVM --resource-group MyResourceGroup

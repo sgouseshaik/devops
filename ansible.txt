@@ -1,0 +1,16 @@
+# Ansible Inventory & Ad-Hoc Commands
+#======================================
+ansible-inventory --list       # List inventory
+ansible all -m ping            # Ping all hosts
+ansible all -m shell -a "uptime" # Run a command on all hosts
+
+#Running Playbooks
+#===================
+ansible-playbook site.yml --syntax-check # Syntax check
+ansible-playbook site.yml --limit webservers # Run playbook for webservers
+
+# User & Package Management
+#==========================
+ansible all -m user -a "name=john state=present"
+ansible all -m yum -a "name=nginx state=latest"
+

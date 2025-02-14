@@ -1,0 +1,253 @@
+#Cluster & Node Management
+#===========================
+kubectl get nodes              # List nodes in the cluster
+kubectl describe node <node>   # Get detailed info on a node
+
+#Deployment & Service Management
+#================================
+
+kubectl get pods               # List all pods
+kubectl get deployments        # List all deployments
+kubectl get svc                # List all services
+kubectl describe pod <pod>     # Get details about a pod
+
+#Scaling & Rolling Updates
+#===========================
+kubectl scale deployment myapp --replicas=5
+kubectl set image deployment/myapp myapp=myrepo.azurecr.io/myapp:v2
+kubectl rollout status deployment/myapp
+kubectl rollout undo deployment/myapp
+
+
+# Kubernetes Cluster Management
+
+#1.1 Cluster & Node Management
+#=================================
+kubectl cluster-info                  # View cluster information
+kubectl config current-context        # Show current context
+kubectl get nodes                      # List all nodes in the cluster
+kubectl describe node <node-name>      # Get details of a specific node
+kubectl cordon <node-name>             # Mark a node as unschedulable
+kubectl drain <node-name> --ignore-daemonsets  # Safely evict all pods from a node
+kubectl uncordon <node-name>           # Make the node schedulable again
+kubectl top nodes                      # Show node CPU & memory usage
+
+#2. Kubernetes Pod Management
+#2.1 Working with Pods
+#==========================
+kubectl get pods                       # List all pods
+kubectl get pods -o wide               # List pods with node info
+kubectl describe pod <pod-name>        # Show detailed information about a pod
+kubectl delete pod <pod-name>          # Delete a specific pod
+kubectl logs <pod-name>                # View logs of a pod
+kubectl logs -f <pod-name>             # View live logs (tail -f)
+kubectl exec -it <pod-name> -- /bin/sh # Open shell in a running pod
+kubectl top pod                        # Show CPU and memory usage of pods
+
+#2.2 Create & Delete Pods
+#============================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    app: myapp
+spec:
+  containers:
+  - name: myapp-container
+    image: nginx
+    ports:
+    - containerPort: 80
+kubectl apply -f mypod.yaml             # Create a pod
+kubectl delete pod mypod                 # Delete a pod
+
+#3. Deployment Management
+#3.1 Managing Deployments
+===========================
+kubectl get deployments                 # List deployments
+kubectl describe deployment <deploy>    # Describe a deployment
+kubectl delete deployment <deploy>      # Delete a deployment
+kubectl rollout status deployment <deploy> # Check rollout status
+kubectl rollout undo deployment <deploy>   # Rollback to the previous version
+
+#3.2 Scaling Applications
+===============================
+kubectl scale deployment myapp --replicas=5  # Scale the deployment to 5 replicas
+kubectl get pods                             # Verify scaling
+
+3.3 Rolling Updates & Rollbacks
+================================
+kubectl set image deployment/myapp myapp=myrepo.azurecr.io/myapp:v2
+kubectl rollout status deployment myapp   # Check rollout progress
+kubectl rollout history deployment myapp  # View deployment history
+kubectl rollout undo deployment myapp     # Rollback in case of failure
+
+4. Kubernetes Services & Networking
+========================================
+4.1 Service Types
+==================
+kubectl get services                     # List all services
+kubectl describe service <service-name>   # Describe service details
+kubectl delete service <service-name>     # Delete a service
+
+4.2 Exposing Applications
+==============================
+kubectl expose deployment myapp --type=LoadBalancer --port=80 --target-port=3000
+kubectl get svc                          # Get external IP address of LoadBalancer service
+
+4.3 Ingress Controller
+========================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - host: myapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: my-service
+            port:
+              number: 80
+
+kubectl apply -f ingress.yaml
+kubectl get ingress
+
+#5. Storage Management
+======================
+#5.0 Create a Persistent Volume (PV)
+==================================
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data"
+
+kubectl apply -f pv.yaml
+kubectl get pv
+
+
+
+#5.1 Persistent Volume Claims (PVC)
+=====================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+kubectl apply -f pvc.yaml
+kubectl get pvc
+
+#6. Security & Access Management
+#====================================
+#6.1 Role-Based Access Control (RBAC)
+=============================================
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+kubectl apply -f rbac.yaml
+kubectl get roles
+
+#6.2 Network Policies
+=======================
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+kubectl apply -f network-policy.yaml
+
+# 7. Monitoring & Logging
+==========================
+# 7.1 Monitoring Pods & Nodes
+==============================
+kubectl top nodes
+kubectl top pods
+
+#7.2 Viewing Logs
+=================
+kubectl logs -f <pod-name>     # View live logs
+kubectl logs <pod-name> --previous  # View previous logs
+
+# 8. Debugging & Troubleshooting
+==================================
+# 8.1 Describe and Debug Pods
+============================
+
+kubectl describe pod <pod-name>  # Get detailed info on a pod
+kubectl get events               # View Kubernetes events
+kubectl exec -it <pod-name> -- /bin/sh  # Access pod shell
+
+8.2 Restarting Pods
+=======================
+kubectl delete pod <pod-name>        # Delete pod (will auto-restart if part of Deployment)
+kubectl rollout restart deployment myapp  # Restart all pods in Deployment
+
+8.3 Checking Network Connectivity
+=====================================
+kubectl run curlpod --image=alpine --restart=Never -- sleep 3600
+kubectl exec -it curlpod -- curl http://myservice.default.svc.cluster.local
+
+9. Auto-Scaling in Kubernetes
+================================
+9.1 Horizontal Pod Autoscaler (HPA)
+kubectl autoscale deployment myapp --cpu-percent=50 --min=2 --max=10
+kubectl get hpa
+#10. Helm Package Manager
+#==========================
+#10.1 Install & Use Helm
+#==========================
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm search repo nginx
+helm install my-nginx bitnami/nginx
+helm list
+helm uninstall my-nginx
+
+#11. CI/CD with Kubernetes
+#11.1 Deploy via CI/CD
+name: Deploy to AKS
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl set image deployment/myapp myapp=myrepo.azurecr.io/myapp:${{ github.sha }}

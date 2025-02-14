@@ -1,0 +1,21 @@
+# File & Directory Management
+#=============================
+
+ls -lh                         # List files with details
+cd /var/log                    # Navigate to logs directory
+mkdir mydir                    # Create a directory
+rm -rf mydir                   # Delete a directory
+
+# User & Permission Management
+#=============================
+sudo useradd devops             # Create a new user
+sudo passwd devops              # Set password for user
+sudo chmod 755 script.sh        # Modify file permissions
+
+#Networking & System Monitoring
+#====================================
+ip a                            # Check IP addresses
+ping google.com                 # Test network connectivity
+netstat -tulnp                  # Check open ports
+top                             # Monitor system usage
+df -h                           # Check disk space

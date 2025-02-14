@@ -1,0 +1,19 @@
+#Basic Docker Commands
+#======================
+docker --version             # Check Docker version
+docker ps                    # List running containers
+docker ps -a                 # List all containers
+docker images                # List all images
+
+#Container Management
+#=====================
+docker run -d -p 8080:80 nginx  # Run an Nginx container
+docker stop <container_id>       # Stop a running container
+docker rm <container_id>         # Remove a container
+docker rmi <image_id>            # Remove an image
+
+#Building & Pushing Images
+#==========================
+docker build -t myimage:v1 .    # Build a Docker image
+docker tag myimage:v1 myrepo.azurecr.io/myimage:v1
+docker push myrepo.azurecr.io/myimage:v1
